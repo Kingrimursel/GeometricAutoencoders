@@ -1,0 +1,5 @@
+stuff/*
+tests/output/graphics
+tests/output/runs
+.idea
+data/raw
