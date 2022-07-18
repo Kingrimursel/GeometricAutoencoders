@@ -45,7 +45,7 @@ def plot_knn_performance(model,
     knn_success_rate = knn_success_rate.detach().cpu()
 
     # plot the first version: the variance of the natural representation
-    fig_knn, ax_knn = plt.subplots()
+    fig_knn, ax_knn = plt.subplots(figsize=(5, 5))
     # fig_knn.suptitle("Nearest Neighbour Similarity")
 
     if model.latent_dim > 1:
@@ -66,7 +66,7 @@ def plot_knn_performance(model,
     ax_knn.axis("off")
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -105,12 +105,20 @@ def get_classification_error(model, dataloader, model_paths, k, xranges):
             # there might be a readme.txt
             try:
                 # load statedict to model
+                # print(file)
+                # print(os.path.join(model_path, file))
                 model.load(os.path.join(model_path, file))
-            except _pickle.UnpicklingError:
+            except (_pickle.UnpicklingError):
                 continue
 
             # forward pass
             inputs, outputs, latent_activations, labels = data_forward(model, dataloader)
+
+            inputs = inputs.detach()
+            outputs = outputs.detach()
+            latent_activations = latent_activations.detach()
+
+            labels = labels.type(torch.int32)
 
             # pairwise distances
             distances_latent = torch.cdist(latent_activations, latent_activations)
@@ -166,7 +174,7 @@ def classification_error_figure(model,
     # mse_error = mse_error.detach().cpu()
     # xranges = xranges.detach().cpu()
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
     # fig.suptitle(f"Classification (k={k} in latent space)- and Reconstruction Loss")
 
     ax.set_xlabel("regularization")
@@ -186,7 +194,7 @@ def classification_error_figure(model,
     plt.legend()
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -219,7 +227,6 @@ def classification_error_table(model,
         best_knn[i + 1] = torch.min(knn_error[1:]).item()
         best_mse[i + 1] = torch.min(mse_error[1:]).item()
 
-
     baseline_knn = torch.mean(baseline_knns)
     baseline_mse = torch.mean(baseline_mses)
 
@@ -250,10 +257,11 @@ def classification_error_table(model,
 
     table = plt.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, loc="center", cellLoc="center")
 
+    table.set_fontsize(14)
     # pd.plotting.table(ax, df)
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 

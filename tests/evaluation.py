@@ -14,7 +14,8 @@ from AutoEncoderVisualization.diagnostics.embedding import plot_knn_performance,
     classification_error_table
 
 from data.handle_data import load_data
-from models import DeepThinAutoEncoder, SoftplusAE, ELUAutoEncoder, DeepThinSigmoidAutoEncoder, TestELUAutoEncoder
+from models import DeepThinAutoEncoder, SoftplusAE, ELUAutoEncoder, DeepThinSigmoidAutoEncoder, TestELUAutoEncoder, \
+    ThinAutoEncoder
 from conf import device, get_summary_writer, output_path
 from AutoEncoderVisualization.tests.train import train_model
 
@@ -26,20 +27,26 @@ os.environ["GEOMSTATS_BACKEND"] = "pytorch"
 AE = DeepThinAutoEncoder
 # AE = ELUAutoEncoder
 # AE = TestELUAutoEncoder
+# AE = ThinAutoEncoder
 
 # evaluate
 eval_model = True
 
-dataset = "Spheres"
+dataset = "Saddle"
 
 """ end modify """
 
 # set input dimensions
-if dataset in ["SwissRoll", "Mammoth", "Saddle", "HyperbolicParabloid", "Earth", "Spheres"]:
+if dataset in ["SwissRoll", "Mammoth", "HyperbolicParabloid", "Earth", "Spheres"]:
     input_dim = 3
     latent_dim = 2
 
     train_batch_size = 512
+elif dataset in ["Saddle"]:
+    input_dim = 3
+    latent_dim = 2
+
+    train_batch_size = 128
 elif dataset in ["chiocciola", "FigureEight"]:
     input_dim = 2
     latent_dim = 1
@@ -219,6 +226,14 @@ def evaluate(alpha=None,
         #                  writer=writer,
         #                  output_path=os.path.join(image_save_path, "circular.png"))
 
+        # plot latent space
+        latent_space(model,
+                     test_loader,
+                     cmap="tab10",
+                     dataset=dataset,
+                     output_path=os.path.join(image_save_path, "latent_space.png"),
+                     writer=writer)
+
         if latent_dim > 1:
             # calculate distances from multiple randomly sampled points to all other points
             distances_from_points(model,
@@ -261,37 +276,29 @@ def evaluate(alpha=None,
         #                     output_path=os.path.join(image_save_path, "knn_similarities.png"),
         #                    k=20)
 
-        # plot latent space
-        latent_space(model,
-                     test_loader,
-                     cmap="tab10",
-                     dataset=dataset,
-                     output_path=os.path.join(image_save_path, "latent_space.png"),
-                     writer=writer)
-
         # decoder knn variance
-        decoder_knn_variance_latent(model, test_loader,
-                                    scaling="log",
-                                    output_path=os.path.join(image_save_path, "var_dec_lat.png"),
-                                    k=100,
-                                    writer=writer,
-                                    # vmin=-3.8927, vmax=0.3909
-                                    )
+        # decoder_knn_variance_latent(model, test_loader,
+        #                            scaling="log",
+        #                            output_path=os.path.join(image_save_path, "var_dec_lat.png"),
+        #                            k=100,
+        #                            writer=writer,
+        #                            # vmin=-3.8927, vmax=0.3909
+        #                            )
 
         # encoder knn variance
-        encoder_knn_variance_latent(model, test_loader,
-                                    scaling="log",
-                                    output_path=os.path.join(image_save_path, "var_enc_lat.png"),
-                                    output_path_3d=os.path.join(image_save_path, "var_enc_lat_3d.png"),
-                                    k=100,
-                                    writer=writer)
+        # encoder_knn_variance_latent(model, test_loader,
+        #                            scaling="log",
+        #                            output_path=os.path.join(image_save_path, "var_enc_lat.png"),
+        #                            output_path_3d=os.path.join(image_save_path, "var_enc_lat_3d.png"),
+        #                            k=100,
+        #                            writer=writer)
 
         # encoder gaussian variance
-        encoder_gaussian_variance(model,
-                                  test_loader,
-                                  scaling="log",
-                                  output_path=os.path.join(image_save_path, "var_enc_gaus.png"),
-                                  writer=writer)
+        # encoder_gaussian_variance(model,
+        #                          test_loader,
+        #                          scaling="log",
+        #                          output_path=os.path.join(image_save_path, "var_enc_gaus.png"),
+        #                          writer=writer)
 
         if latent_dim > 1:
             # calculate indicatrices
@@ -309,9 +316,16 @@ def evaluate(alpha=None,
                               output_path_2=os.path.join(image_save_path, "det_hist.png"), writer=writer)
 
             # sectional curvature
-            sectional_curvature(model, test_loader, quantile=0.99, device=device, batch_size=100, writer=writer,
+            sectional_curvature(model, test_loader,
+                                quantile=0.99,
+                                device=device,
+                                batch_size=50,
+                                # vmin=-0.9556,
+                                # vmax=0.9812,
+                                writer=writer,
                                 scaling="asinh",
-                                input_dim=input_dim, output_path_1=os.path.join(image_save_path, "curv.png"),
+                                input_dim=input_dim,
+                                output_path_1=os.path.join(image_save_path, "curv.png"),
                                 output_path_2=os.path.join(image_save_path, "curv_hist.png"))
 
         # circular variance
@@ -334,9 +348,9 @@ def knn_evaluation(dataset,
                                           test_batch_size=256,
                                           dataset=dataset)
 
-    AE = ELUAutoEncoder
+    AE = TestELUAutoEncoder
 
-    input_dim = 784
+    input_dim = 306
     latent_dim = 2
 
     model = AE(input_shape=input_dim, latent_dim=latent_dim).to(device)
@@ -379,8 +393,8 @@ def knn_evaluation(dataset,
 
     classification_error_table(model, test_loader, model_paths, k=k, xranges=xranges, legend_labels=labels,
                                writer=writer,
-                               output_path=os.path.join(image_save_path, "knn_classification_figure.png"))
+                               output_path=os.path.join(image_save_path, "knn_classification_table.png"))
 
-    classification_error_figure(model, test_loader, model_paths, k=k, xranges=xranges, legend_labels=labels,
-                                writer=writer,
-                                output_path=os.path.join(image_save_path, "knn_classification_figure.png"))
+    # classification_error_figure(model, test_loader, model_paths, k=k, xranges=xranges, legend_labels=labels,
+    #                            writer=writer,
+    #                            output_path=os.path.join(image_save_path, "knn_classification_figure.png"))

@@ -5,15 +5,13 @@ os.environ["GEOMSTATS_BACKEND"] = "pytorch"
 
 from evaluation import evaluate, knn_evaluation
 
-# knn_evaluation("MNIST",
-#               ["models/MNIST/ELUAutoEncoder/2022.06.17/MNIST/alpha",
-#                "models/MNIST/ELUAutoEncoder/2022.06.17/MNIST/beta",
-#                "models/MNIST/ELUAutoEncoder/2022.06.22/MNIST/gamma"],
+# knn_evaluation("Zilionis",
+#               ["models/Zilionis/TestELUAutoEncoder/2022.07.12/Zilionis/alpha",
+#                "models/Zilionis/TestELUAutoEncoder/2022.07.12/Zilionis/beta"],
 #               writer_dir="test",
-#               indices=["alpha", "beta", "gamma"],
-#               labels=[r"$\mathbf{det}$", r"$\mathbf{dist}$", r"$\mathbf{indic}$"],
+#               indices=["alpha", "beta"],
+#               labels=[r"$\mathbf{det}$", r"$\mathbf{dist}$"],
 #               k=5)
-
 
 # SADDLE
 model_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/tests/output/models/Saddle/DeepThinAutoEncoder/2022.06.22/Saddle/0.0000e+4_0.0000e+4_0.0000e+4_0.0000e+4.pth"
@@ -41,12 +39,18 @@ model_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/tests/outp
 # model_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/tests/output/models/Mammoth/DeepThinAutoEncoder/2022.07.06/Mammoth/alpha/1.0000e+1_0.0000e+4_0.0000e+4_0.0000e+4.pth"
 # model_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/tests/output/models/Mammoth/DeepThinAutoEncoder/2022.07.06/Mammoth/beta/0.0000e+4_1.0000e+4_0.0000e+4_0.0000e+4.pth"
 
-evaluate(alpha=0, beta=0., delta=0., epsilon=0., gamma=0., writer_dir="video",
-         epochs=30,
+# Zilionis
+# model_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/tests/output/models/Zilionis/TestELUAutoEncoder/2022.07.12/Zilionis/alpha/0.0000e+4_0.0000e+4_0.0000e+4_0.0000e+4.pth"
+# model_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/tests/output/models/Zilionis/TestELUAutoEncoder/2022.07.12/Zilionis/beta/0.0000e+4_1.0000e+0_0.0000e+4_0.0000e+4.pth"
+# model_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/tests/output/models/Zilionis/TestELUAutoEncoder/2022.07.12/Zilionis/alpha/1.0000e-2_0.0000e+4_0.0000e+4_0.0000e+4.pth"
+
+
+evaluate(alpha=0, beta=0., delta=0., epsilon=0., gamma=0., writer_dir="test",
+         epochs=20,
          mode="vanilla",
-         create_video=True,
-         train=True,
-         model_path=None,
+         create_video=False,
+         train=False,
+         model_path=model_path,
          save=False,
          std=1,
          n_gaussian_samples=10,

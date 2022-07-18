@@ -86,7 +86,7 @@ def sectional_curvature(model,
     curvature = curvature.detach().cpu()
 
     # color-coded
-    fig_col, ax_col = plt.subplots()
+    fig_col, ax_col = plt.subplots(figsize=(5, 5))
 
     # fig_col.suptitle(f"{prefix}Sectional Curvature")
     ax_col.axis("off")
@@ -94,10 +94,13 @@ def sectional_curvature(model,
     scatter_col = ax_col.scatter(coordinates[:, 0][middle_idx],
                                  coordinates[:, 1][middle_idx],
                                  c=scaled_curvature[middle_idx],
-                                 s=10,
-                                 marker=".",
-                                 alpha=0.5,
+                                 cmap="viridis",
+                                 # s=10,
+                                 # marker=".",
+                                 # alpha=0.5,
+                                 **get_sc_kwargs(),
                                  **kwargs)
+
     divider = make_axes_locatable(ax_col)
     cax = divider.append_axes("right", size="5%", pad=0.05)
 
@@ -135,12 +138,12 @@ def sectional_curvature(model,
         fig_col_3d = None
 
     if output_path_1 is not None:
-        plt.savefig(output_path_1, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path_1, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
     # histogram
-    fig_hist, ax_hist = plt.subplots()
+    fig_hist, ax_hist = plt.subplots(figsize=(5, 5))
     # fig_hist.suptitle(f"{prefix}Curvature Distribution")
 
     ax_hist.hist(scaled_curvature[middle_idx].numpy(), bins=40, density=True, alpha=.5, color="navy")
@@ -150,7 +153,7 @@ def sectional_curvature(model,
     ax_hist.spines[['right', 'top', 'left']].set_visible(False)
 
     if output_path_2 is not None:
-        plt.savefig(output_path_2, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path_2, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -254,15 +257,14 @@ def plot_determinants(model,
     latent_activations = latent_activations.detach().cpu()
 
     # plot color-coded determinants
-    fig_col, ax_col = plt.subplots()
+    fig_col, ax_col = plt.subplots(figsize=((5, 5)))
 
     # fig_col.suptitle(f"{prefix}Determinants")
 
     scatter_col = ax_col.scatter(coordinates[:, 0][middle_idx],
                                  coordinates[:, 1][middle_idx],
                                  c=dets_scaled[middle_idx],
-                                 alpha=0.5,
-                                 s=10, marker=".")
+                                 **get_sc_kwargs())
     divider = make_axes_locatable(ax_col)
     cax = divider.append_axes("right", size="5%", pad=0.05)
 
@@ -276,12 +278,12 @@ def plot_determinants(model,
     ax_col.axis("off")
 
     if output_path_1 is not None:
-        plt.savefig(output_path_1, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path_1, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
     # plot histogram of the determinants
-    fig_hist, ax_hist = plt.subplots()
+    fig_hist, ax_hist = plt.subplots(figsize=(5, 5))
     # fig_hist.suptitle(f"{prefix}Determinants Distribution")
     ax_hist.hist(dets_scaled.numpy(), bins=40, density=True, alpha=.5, color="navy")
     ax_hist.set_xlabel(rf"{prefix}determinant")
@@ -293,7 +295,7 @@ def plot_determinants(model,
         ax_hist.set_xlim(*x_lim_hist)
 
     if output_path_2 is not None:
-        plt.savefig(output_path_2, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path_2, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -361,7 +363,7 @@ def indicatrices(model,
     latent_activations = latent_activations.detach().cpu()
 
     # plot blobs
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
 
     ax.scatter(latent_activations[:, 0], latent_activations[:, 1], c=labels, cmap="tab10", **get_sc_kwargs())
     p = PatchCollection(polygons)
@@ -373,7 +375,7 @@ def indicatrices(model,
     # fig.suptitle(f"Indicatrices")
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 

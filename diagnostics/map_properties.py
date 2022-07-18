@@ -66,7 +66,7 @@ def circular_variance(test_loader, model, writer=None, output_path=None):
     pimg_origin = pimg_origin.detach().cpu()
     dist_img = dist_img.detach().cpu()
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
     # fig.suptitle("Variance of distances inside Rings")
 
     ax.plot(dist_variances, mean_variances, c="navy", alpha=.5)
@@ -77,7 +77,7 @@ def circular_variance(test_loader, model, writer=None, output_path=None):
     writer.add_figure("circular/statistics", plt.gcf())
 
     # create circle plots
-    fig, axs = plt.subplots(num_rows, num_rows)
+    fig, axs = plt.subplots(num_rows, num_rows, figsize=(5, 5))
     # fig.suptitle("Distances in Latent Space")
     counter = 0
 
@@ -130,7 +130,7 @@ def circular_variance(test_loader, model, writer=None, output_path=None):
             counter += 1
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -177,7 +177,7 @@ def distances_from_points(model,
     pimg_origin = pimg_origin.detach().cpu()
     dist_img = dist_img.detach().cpu()
 
-    fig, axs = plt.subplots(num_rows, num_cols)
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(5, 5))
     # fig.suptitle("Distances in output space")
 
     counter = 0
@@ -233,7 +233,7 @@ def distances_from_points(model,
             # TODO: also save each of them einzeln!
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 

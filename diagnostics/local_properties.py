@@ -52,7 +52,7 @@ def decoder_knn_variance_latent(model,
     outputs = outputs.detach().cpu()
 
     # plot the first version: the variance of the natural representation
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
     if model.latent_dim > 1:
         scatter = ax.scatter(latent_activations[:, 0][idx_preimage],
                              latent_activations[:, 1][idx_preimage],
@@ -80,7 +80,7 @@ def decoder_knn_variance_latent(model,
     ax.set_xticks([], [])
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -139,7 +139,7 @@ def encoder_knn_variance_latent(model,
     outputs = outputs.detach().cpu()
 
     # plot input variances
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
 
     if model.latent_dim > 1:
         scatter = ax.scatter(latent_activations[:, 0][idx_image],
@@ -169,7 +169,7 @@ def encoder_knn_variance_latent(model,
     ax.set_xticks([], [])
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -191,7 +191,7 @@ def encoder_knn_variance_latent(model,
 
         transform_axes(ax)
 
-        plt.savefig(output_path_3d, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path_3d, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
         plt.show()
 
@@ -241,7 +241,7 @@ def encoder_gaussian_variance(model,
     scaled_var_dist_samples_image = scaled_var_dist_samples_image.detach().cpu()
     outputs = outputs.detach().cpu()
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5, 5))
 
     if model.latent_dim > 1:
         scatter2 = ax.scatter(latent_activations[:, 0][middle_idx],
@@ -269,7 +269,7 @@ def encoder_gaussian_variance(model,
     ax.set_xticks([], [])
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 

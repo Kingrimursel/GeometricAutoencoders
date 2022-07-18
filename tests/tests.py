@@ -71,8 +71,43 @@ DIFFERENT TESTS
 """
 
 
+def umap_zilionis():
+    zilionis = Zilionis(dir_path="/export/home/pnazari/workspace/AutoEncoderVisualization/data/raw/zilionis")
+
+    seed = 0
+
+    umapperns_after = umap.UMAP(metric="cosine",
+                                n_neighbors=30,
+                                n_epochs=750,
+                                # log_losses="after",
+                                random_state=seed,
+                                verbose=True)
+    latent_activations = umapperns_after.fit_transform(zilionis.dataset)
+
+    fig, ax = plt.subplots()
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    scatter = ax.scatter(latent_activations[:, 0],
+                         latent_activations[:, 1],
+                         **get_sc_kwargs(),
+                         c=zilionis.labels,
+                         cmap="tab10")
+
+    output_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/stuff/zilionis_umap.png"
+
+    plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
+
+    plt.show()
+
 def test_zilionis():
     z = Zilionis(dir_path="/export/home/pnazari/workspace/AutoEncoderVisualization/data/raw/zilionis")
+
+    print(torch.max(torch.abs(torch.mean(z.dataset, dim=1))))
+    print(torch.std(z.dataset, dim=1))
+
+    # print(z.dataset.shape)
+    # print(torch.min(z.dataset, dim=1).values.shape, torch.max(z.dataset, dim=1))
 
 
 def tsne_umap():
@@ -103,7 +138,7 @@ def tsne_umap():
 
     output_path = "/export/home/pnazari/workspace/AutoEncoderVisualization/stuff/spheres_tsne.png"
 
-    plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+    plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -997,5 +1032,5 @@ def test_coordinate_grid():
     plt.show()
 
 
-test_zilionis()
+umap_zilionis()
 # tsne_umap()

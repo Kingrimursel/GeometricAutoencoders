@@ -1,6 +1,6 @@
 import os
 import torch
-from data.custom import Earth
+from data.custom import Earth, Zilionis
 from matplotlib import pyplot as plt
 
 from data.handle_data import data_forward
@@ -25,7 +25,7 @@ def latent_space(model,
     outputs = outputs.detach().cpu()
     labels = labels.detach().cpu().numpy()
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(5,5))
     # fig.suptitle("Latent Space")
 
     ax.set_aspect("equal")
@@ -49,6 +49,11 @@ def latent_space(model,
 
         string_labels = Earth().transform_labels(labels)
         ax.legend(handles, string_labels, title="labels", loc="center left", bbox_to_anchor=(1, 0.5))
+    elif dataset == "Zilionis":
+        handles, _ = scatter.legend_elements()
+
+        string_labels = Zilionis().transform_labels("/export/home/pnazari/workspace/AutoEncoderVisualization/data/raw/zilionis")
+        ax.legend(handles, string_labels, title="labels", loc="center left", bbox_to_anchor=(1, 0.5))
     else:
         ax.legend(*scatter.legend_elements(), title="labels", loc="center left", bbox_to_anchor=(1, 0.5))
 
@@ -59,7 +64,7 @@ def latent_space(model,
         plt.scatter(latent_activations[::10], torch.zeros_like(latent_activations[::10]), c=labels[::10], marker=".")
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -98,7 +103,7 @@ def plot_dataset(model,
     transform_axes(ax)
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 
@@ -129,7 +134,7 @@ def reconstruction(model,
     sc_kwargs = get_sc_kwargs()
 
     if input_dim == 784:
-        fig_sum, (ax1, ax3) = plt.subplots(1, 2)
+        fig_sum, (ax1, ax3) = plt.subplots(1, 2, figsize=(5, 5))
         # fig_sum.suptitle(f"Input/Output comparison")
 
         ax1.imshow(inputs)
@@ -173,7 +178,7 @@ def reconstruction(model,
         writer.add_mesh("output", vertices=outputs, colors=labels, config_dict=point_size_config)
 
     elif input_dim == 2:
-        fig_sum, (ax1, ax2, ax3) = plt.subplots(1, 3)
+        fig_sum, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(5, 5))
 
         ax1.scatter(inputs[:, 0], inputs[:, 1], c=labels, s=1)
         ax2.scatter(latent_activations, torch.zeros_like(latent_activations), c=labels, s=1, marker="v")
@@ -187,7 +192,7 @@ def reconstruction(model,
         return
 
     if output_path is not None:
-        plt.savefig(output_path, format="png", bbox_inches='tight', dpi=1200)
+        plt.savefig(output_path, format="png", bbox_inches='tight', pad_inches=0, dpi=300)
 
     plt.show()
 

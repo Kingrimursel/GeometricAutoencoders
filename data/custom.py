@@ -36,6 +36,8 @@ class CustomDataset(Dataset):
             else:
                 self.labels = self.coordinates
 
+            self.labels = self.coordinates
+
     def __len__(self):
         return self.n_samples
 
@@ -431,6 +433,11 @@ class Zilionis(CustomDataset):
             self.dir_path = dir_path
             super().__init__(n_samples=n_samples, *args, **kwargs)
 
+            mean_dataset = torch.mean(self.dataset, dim=1)
+            std_dataset = torch.std(self.dataset, dim=1)
+
+            self.dataset = (self.dataset - mean_dataset[:, None]) / std_dataset[:, None]
+
     # curtesy of https://github.com/hci-unihd/UMAPs-true-loss/blob/master/notebooks/UMAP_lung_cancer.ipynb
     def create(self):
         """
@@ -442,8 +449,13 @@ class Zilionis(CustomDataset):
 
         meta = pd.read_csv(os.path.join(self.dir_path, "cancer_qc_final_metadata.txt"), sep="\t", header=0)
 
-        le = preprocessing.LabelEncoder()
-        labels = torch.tensor(le.fit_transform(meta["Major cell type"].to_numpy()))
+        cell_types = meta["Major cell type"].to_numpy()
+
+        labels = np.zeros(len(cell_types)).astype(int)
+        for i, phase in enumerate(np.unique(cell_types)):
+            labels[cell_types == phase] = i
+
+        labels = torch.tensor(labels)
 
         # get only n samples
         idx = torch.randperm(labels.shape[0])[:self.n_samples]
@@ -466,3 +478,13 @@ class Zilionis(CustomDataset):
         # np.random.shuffle(colors)
 
         return pca306, labels
+
+    @staticmethod
+    def transform_labels(dir_path):
+        meta = pd.read_csv(os.path.join(dir_path, "cancer_qc_final_metadata.txt"), sep="\t", header=0)
+        cell_types = meta["Major cell type"].to_numpy()
+
+        string_labels = np.unique(cell_types)
+        string_labels = np.array([cell_type[1:] for cell_type in string_labels])
+
+        return list(string_labels)

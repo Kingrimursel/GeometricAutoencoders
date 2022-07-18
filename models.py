@@ -101,6 +101,32 @@ class DeepThinAutoEncoder(AutoEncoder):
 
         self.register_hook()
 
+class ThinAutoEncoder(AutoEncoder):
+    def __init__(self, **kwargs):
+        self.input_dim = kwargs["input_shape"]
+
+        super().__init__(**kwargs)
+
+        self.encoder = nn.Sequential(
+            nn.ELU(),
+            nn.Linear(self.input_dim, out_features=4),
+            nn.ELU(),
+            nn.Linear(in_features=4, out_features=3),
+            nn.ELU(),
+            nn.Linear(in_features=3, out_features=self.latent_dim),
+        )
+
+        self.decoder = nn.Sequential(
+            nn.ELU(),
+            nn.Linear(self.latent_dim, out_features=3),
+            nn.ELU(),
+            nn.Linear(in_features=3, out_features=4),
+            nn.ELU(),
+            nn.Linear(in_features=4, out_features=self.input_dim),
+        )
+
+        self.register_hook()
+
 
 class DeepThinSigmoidAutoEncoder(AutoEncoder):
     def __init__(self, **kwargs):
@@ -159,6 +185,7 @@ class DeepThinSigmoidAutoEncoder(AutoEncoder):
         )
 
         self.register_hook()
+
 
 class LinearAutoEncoder(AutoEncoder):
     def __init__(self, **kwargs):
@@ -238,6 +265,7 @@ class ELUAutoEncoder(AutoEncoder):
 
         self.register_hook()
 
+
 class TestELUAutoEncoder(AutoEncoder):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -246,45 +274,28 @@ class TestELUAutoEncoder(AutoEncoder):
 
         self.encoder = nn.Sequential(
             nn.ELU(),
-            nn.Linear(in_features=kwargs["input_shape"], out_features=256),
+            nn.Linear(in_features=kwargs["input_shape"], out_features=128),
             nn.ELU(),
-            nn.Linear(in_features=256, out_features=128),
-            nn.ELU(),
-            nn.ELU(),
-            nn.Linear(in_features=128, out_features=64),
-            nn.ELU(),
-            nn.Linear(in_features=64, out_features=32),
-            nn.ELU(),
-            nn.Linear(in_features=32, out_features=16),
+            nn.Linear(in_features=128, out_features=16),
             nn.ELU(),
             nn.Linear(in_features=16, out_features=8),
             nn.ELU(),
-            nn.Linear(in_features=8, out_features=4),
-            nn.ELU(),
-            nn.Linear(in_features=4, out_features=self.latent_dim)
+            nn.Linear(in_features=8, out_features=self.latent_dim)
         )
 
         self.decoder = nn.Sequential(
             nn.ELU(),
-            nn.Linear(in_features=self.latent_dim, out_features=4),
-            nn.ELU(),
-            nn.Linear(in_features=4, out_features=8),
-            nn.ELU(),
+            nn.Linear(in_features=self.latent_dim, out_features=8),
             nn.ELU(),
             nn.Linear(in_features=8, out_features=16),
             nn.ELU(),
-            nn.Linear(in_features=16, out_features=32),
+            nn.Linear(in_features=16, out_features=128),
             nn.ELU(),
-            nn.Linear(in_features=32, out_features=64),
-            nn.ELU(),
-            nn.Linear(in_features=64, out_features=128),
-            nn.ELU(),
-            nn.Linear(in_features=128, out_features=256),
-            nn.ELU(),
-            nn.Linear(in_features=256, out_features=kwargs["input_shape"])
+            nn.Linear(in_features=128, out_features=kwargs["input_shape"])
         )
 
         self.register_hook()
+
 
 """
 Helpers
